@@ -81,9 +81,17 @@ input[type=file]{display:none}
 .ig-date{margin-left:auto;margin-right:12px;font-family:'Source Sans 3',sans-serif;font-size:0.72rem;font-weight:600;color:rgba(255,255,255,0.6)}
 .ind-group-hdr.changed{box-shadow:inset 4px 0 0 var(--gold)}
 .ind-group-hdr.changed .ig-date{color:var(--gold-light);font-weight:800}
-.comp-card.changed{box-shadow:0 0 0 2px var(--gold),0 2px 10px rgba(0,0,0,0.08)}
-.sub-pill.changed{font-weight:800;border-color:var(--gold)!important;box-shadow:inset 0 0 0 1px var(--gold)}
-.sub-pill.changed .sub-name::after{content:" \25CF";color:var(--gold);font-size:0.6rem;vertical-align:middle}
+.comp-card.changed{box-shadow:0 0 0 3px var(--gold),0 2px 12px rgba(0,0,0,0.12)}
+.comp-card.changed.up{box-shadow:0 0 0 3px var(--pos),0 2px 12px rgba(0,0,0,0.12)}
+.comp-card.changed.down{box-shadow:0 0 0 3px var(--neg),0 2px 12px rgba(0,0,0,0.12)}
+.chg-chip.up{background:var(--pos)}
+.chg-chip.down{background:var(--neg)}
+.sub-pill.changed{font-weight:800;box-shadow:inset 0 0 0 2px var(--gold)}
+.sub-pill.changed.up{box-shadow:inset 0 0 0 2px var(--pos);border-color:var(--pos)!important}
+.sub-pill.changed.down{box-shadow:inset 0 0 0 2px var(--neg);border-color:var(--neg)!important}
+.sub-pill.changed .sub-name::after{content:" \25B2";font-size:0.6rem;vertical-align:middle;color:var(--gold)}
+.sub-pill.changed.up .sub-name::after{color:var(--pos)}
+.sub-pill.changed.down .sub-name::after{content:" \25BC";color:var(--neg)}
 /* changed rows: green = improved, red = declined, gold = direction unknown */
 .ind-table tr.changed td{background:#fdf6e3}
 .ind-table tr.changed.up td{background:#e3f4e8}
@@ -879,12 +887,12 @@ function renderCompCards() {
       const chg = code && CODE_MAP[code] && isRecent(CODE_MAP[code].signalDate);
       const e = code && CODE_MAP[code];
       const attrs = e ? ` data-name="${s}" data-date="${e.signalDate||''}" data-reading="${e.reading||''}" data-prev="${e.prev||''}" data-chg="${chg?1:0}"` : '';
-      return `<div class="sub-pill ${sub.mode}${chg?' changed':''}"${attrs}><span class="sub-name">${s}</span><span class="sub-score">${sub.score.toFixed(0)}</span></div>`;
+      return `<div class="sub-pill ${sub.mode}${chg?` changed ${direction(e)}`:''}"${attrs}><span class="sub-name">${s}</span><span class="sub-score">${sub.score.toFixed(0)}</span></div>`;
     }).join('');
     const ccChg = isRecent(cr.signalDate);
-    return `<div class="comp-card${ccChg?' changed':''}">
+    return `<div class="comp-card${ccChg?` changed ${direction(cr)}`:''}">
       <div class="cc-head ${reading}">
-        <div class="cc-name">${c.name}${ccChg?`<span class="chg-chip">Changed ${shortDate(cr.signalDate)}</span>`:''}</div>
+        <div class="cc-name">${c.name}${ccChg?`<span class="chg-chip ${direction(cr)}">Changed ${shortDate(cr.signalDate)}</span>`:''}</div>
         <div class="cc-rdg ${reading}">${reading}</div>
       </div>
       <div class="cc-body">
